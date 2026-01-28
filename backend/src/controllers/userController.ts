@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { Op } from 'sequelize';
 import { User, Match, Registration, Event, Game } from '../models';
 import { AuthRequest } from '../middleware/authMiddleware';
 import sequelize from '../config/database';
@@ -129,11 +130,11 @@ export const getUserStats = async (req: AuthRequest, res: Response): Promise<voi
 
     // Get upcoming registrations
     const upcomingRegistrations = await Registration.findAll({
-      where: { userId, status: { [sequelize.Op.ne]: 'cancelled' } },
+      where: { userId, status: { [Op.ne]: 'cancelled' } },
       include: [{
         model: Event,
         as: 'event',
-        where: { date: { [sequelize.Op.gte]: new Date() } },
+        where: { date: { [Op.gte]: new Date() } },
         attributes: ['id', 'name', 'date', 'location']
       }],
       order: [[{ model: Event, as: 'event' }, 'date', 'ASC']],
