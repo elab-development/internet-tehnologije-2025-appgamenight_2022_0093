@@ -4,8 +4,7 @@ import { QueryInterface, DataTypes } from 'sequelize';
 export async function up(queryInterface: QueryInterface): Promise<void> {
   await queryInterface.addColumn('users', 'avatar', {
     type: DataTypes.STRING(255),
-    allowNull: true,
-    after: 'role'
+    allowNull: true
   });
 }
 
