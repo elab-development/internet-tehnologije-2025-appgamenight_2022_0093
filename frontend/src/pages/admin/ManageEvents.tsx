@@ -123,11 +123,26 @@ const ManageEvents: React.FC = () => {
 
   const handleSave = async () => {
     setError('');
+
+    // Validate required fields
+    if (!formData.name || !formData.name.trim()) {
+      setError('Naziv je obavezan.');
+      return;
+    }
+    if (!formData.date) {
+      setError('Datum je obavezan.');
+      return;
+    }
+    if (!formData.seasonId) {
+      setError('Sezona je obavezna.');
+      return;
+    }
+
     setSaving(true);
 
     try {
       const data = {
-        name: formData.name,
+        name: formData.name.trim(),
         date: formData.date,
         location: formData.location || undefined,
         description: formData.description || undefined,
