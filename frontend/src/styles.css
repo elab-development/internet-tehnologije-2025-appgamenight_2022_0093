@@ -1,0 +1,209 @@
+/* Pastelno roze tema za Game Night */
+
+:root {
+  --pink-light: #fce4ec;
+  --pink-medium: #f8bbd9;
+  --pink-dark: #e91e63;
+  --pink-darker: #c2185b;
+  --pink-pastel: #f48fb1;
+  --white: #ffffff;
+  --gray-light: #fafafa;
+  --text-dark: #4a4a4a;
+}
+
+/* Navbar */
+.navbar {
+  background: linear-gradient(135deg, #e91e63, #f48fb1) !important;
+}
+
+.navbar-brand, .nav-link, .navbar-nav .nav-link {
+  color: white !important;
+}
+
+.nav-link:hover {
+  color: #fce4ec !important;
+}
+
+.dropdown-menu {
+  background-color: var(--pink-light);
+  border: 1px solid var(--pink-medium);
+}
+
+.dropdown-item:hover {
+  background-color: var(--pink-medium);
+}
+
+/* Body background */
+body {
+  background-color: var(--pink-light) !important;
+}
+
+.bg-light {
+  background-color: var(--pink-light) !important;
+}
+
+/* Cards */
+.card {
+  border: 1px solid var(--pink-medium);
+  box-shadow: 0 2px 8px rgba(233, 30, 99, 0.1);
+}
+
+.card-header {
+  background-color: var(--pink-medium) !important;
+  border-bottom: 1px solid var(--pink-pastel);
+  color: var(--text-dark);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--pink-dark) !important;
+  border-color: var(--pink-dark) !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--pink-darker) !important;
+  border-color: var(--pink-darker) !important;
+}
+
+.btn-outline-primary {
+  color: var(--pink-dark) !important;
+  border-color: var(--pink-dark) !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--pink-dark) !important;
+  color: white !important;
+}
+
+.btn-success {
+  background-color: #81c784 !important;
+  border-color: #81c784 !important;
+}
+
+.btn-success:hover {
+  background-color: #66bb6a !important;
+  border-color: #66bb6a !important;
+}
+
+.btn-link {
+  color: var(--pink-dark) !important;
+}
+
+/* Badges */
+.badge.bg-primary {
+  background-color: var(--pink-dark) !important;
+}
+
+.badge.bg-secondary {
+  background-color: var(--pink-pastel) !important;
+  color: var(--text-dark) !important;
+}
+
+.badge.bg-success {
+  background-color: #81c784 !important;
+}
+
+.badge.bg-info {
+  background-color: #b39ddb !important;
+}
+
+.badge.bg-warning {
+  background-color: #ffcc80 !important;
+  color: var(--text-dark) !important;
+}
+
+/* Tables */
+.table {
+  background-color: white;
+}
+
+.table thead th {
+  background-color: var(--pink-medium);
+  border-color: var(--pink-pastel);
+}
+
+.table-hover tbody tr:hover {
+  background-color: var(--pink-light);
+}
+
+/* Forms */
+.form-control:focus, .form-select:focus {
+  border-color: var(--pink-pastel);
+  box-shadow: 0 0 0 0.2rem rgba(233, 30, 99, 0.25);
+}
+
+/* Alerts */
+.alert-success {
+  background-color: #c8e6c9;
+  border-color: #a5d6a7;
+  color: #2e7d32;
+}
+
+.alert-danger {
+  background-color: #ffcdd2;
+  border-color: #ef9a9a;
+  color: #c62828;
+}
+
+.alert-info {
+  background-color: var(--pink-light);
+  border-color: var(--pink-medium);
+  color: var(--pink-darker);
+}
+
+/* Footer */
+.bg-dark {
+  background: linear-gradient(135deg, #e91e63, #f48fb1) !important;
+}
+
+/* List groups */
+.list-group-item {
+  border-color: var(--pink-medium);
+}
+
+.list-group-item:hover {
+  background-color: var(--pink-light);
+}
+
+/* Modal */
+.modal-header {
+  background-color: var(--pink-medium);
+  border-bottom-color: var(--pink-pastel);
+}
+
+.modal-footer {
+  background-color: var(--pink-light);
+  border-top-color: var(--pink-medium);
+}
+
+/* Spinner */
+.spinner-border.text-primary {
+  color: var(--pink-dark) !important;
+}
+
+/* Links */
+a {
+  color: var(--pink-dark);
+}
+
+a:hover {
+  color: var(--pink-darker);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--pink-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--pink-pastel);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--pink-dark);
+}

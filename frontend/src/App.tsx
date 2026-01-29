@@ -21,6 +21,8 @@ import EnterResults from './pages/admin/EnterResults';
 
 // Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
+// Custom pastel pink theme
+import './styles.css';
 
 // Protected Route Component
 interface ProtectedRouteProps {
