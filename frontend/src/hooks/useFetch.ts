@@ -33,8 +33,7 @@ export function useFetch<T>(
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, dependencies);
+  }, [fetchData, ...dependencies]);
 
   return { data, loading, error, refetch: fetchData };
 }

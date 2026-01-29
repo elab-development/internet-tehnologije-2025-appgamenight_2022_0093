@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button as BsButton, Spinner } from 'react-bootstrap';
 
-type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark' | 'outline-primary' | 'outline-secondary' | 'outline-danger';
+type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'light' | 'dark' | 'link' | 'outline-primary' | 'outline-secondary' | 'outline-danger';
 
 interface ButtonProps {
   children: React.ReactNode;
