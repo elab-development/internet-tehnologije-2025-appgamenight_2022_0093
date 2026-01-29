@@ -1,6 +1,5 @@
 import { User, Season, Game, Event, Match, Registration, EventGame } from '../models';
 import sequelize from '../config/database';
-import bcrypt from 'bcryptjs';
 
 async function seed() {
   try {
@@ -16,41 +15,41 @@ async function seed() {
     await Game.destroy({ where: {} });
     await User.destroy({ where: {} });
 
-    // Create Users
-    const hashedPassword = await bcrypt.hash('password123', 10);
+    // Create Users (password will be hashed by model hook)
+    const plainPassword = 'password123';
 
     const admin = await User.create({
       username: 'admin',
       email: 'admin@gamenight.com',
-      password: hashedPassword,
+      password: plainPassword,
       role: 'admin'
     });
 
     const player1 = await User.create({
       username: 'marko',
       email: 'marko@example.com',
-      password: hashedPassword,
+      password: plainPassword,
       role: 'player'
     });
 
     const player2 = await User.create({
       username: 'ana',
       email: 'ana@example.com',
-      password: hashedPassword,
+      password: plainPassword,
       role: 'player'
     });
 
     const player3 = await User.create({
       username: 'petar',
       email: 'petar@example.com',
-      password: hashedPassword,
+      password: plainPassword,
       role: 'player'
     });
 
     const guest = await User.create({
       username: 'gost',
       email: 'gost@example.com',
-      password: hashedPassword,
+      password: plainPassword,
       role: 'guest'
     });
 
