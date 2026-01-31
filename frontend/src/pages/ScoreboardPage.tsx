@@ -99,7 +99,7 @@ const ScoreboardPage: React.FC = () => {
 
   return (
     <Container className="py-4">
-      <h2 className="mb-4">Rang Lista</h2>
+      <h2 className="mb-4">Rang lista</h2>
 
       {/* Filters */}
       <Card className="mb-4">
@@ -153,13 +153,13 @@ const ScoreboardPage: React.FC = () => {
       {/* Scoreboard Table */}
       <Card>
         {loading ? (
-          <p className="text-center mb-0">Ucitavanje...</p>
+          <p className="text-center mb-0">Učitavanje...</p>
         ) : scoreboard.length > 0 ? (
           <Table responsive hover className="mb-0">
             <thead>
               <tr>
                 <th style={{ width: '80px' }}>Rang</th>
-                <th>Igrac</th>
+                <th>Igrač</th>
                 <th className="text-center" style={{ width: '120px' }}>
                   Pobede
                 </th>
@@ -223,7 +223,7 @@ const ScoreboardPage: React.FC = () => {
       {!selectedGame && scoreboard.length > 0 && (
         <Row className="mt-4">
           <Col>
-            <h4 className="mb-3">Statistika po Igrama</h4>
+            <h4 className="mb-3">Statistika po igrama</h4>
             <Row>
               {games.slice(0, 4).map((game) => {
                 const topPlayer = scoreboard.find(
@@ -244,7 +244,7 @@ const ScoreboardPage: React.FC = () => {
                       {topPlayer && topPlayer.games[game.id] && (
                         <p className="mb-0">
                           <small>
-                            Top igrac: <strong>{topPlayer.user.username}</strong>
+                            Top igrač: <strong>{topPlayer.user.username}</strong>
                             <Badge bg="success" className="ms-1">
                               {topPlayer.games[game.id]} pobeda
                             </Badge>

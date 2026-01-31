@@ -60,7 +60,7 @@ const LoginPage: React.FC = () => {
       navigate('/');
     } catch (error: any) {
       setSubmitError(
-        error.response?.data?.message || 'Doslo je do greske pri prijavi.'
+        error.response?.data?.message || 'Došlo je do greške pri prijavi.'
       );
     } finally {
       setLoading(false);

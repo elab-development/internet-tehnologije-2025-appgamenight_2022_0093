@@ -82,7 +82,7 @@ const EventsPage: React.FC = () => {
 
   return (
     <Container className="py-4">
-      <h2 className="mb-4">Dogadjaji</h2>
+      <h2 className="mb-4">Događaji</h2>
 
       {/* Filters */}
       <Card className="mb-4">
@@ -92,7 +92,7 @@ const EventsPage: React.FC = () => {
               <Form.Label>Pretraga</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Pretrazite dogadjaje..."
+                placeholder="Pretražite događaje..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -130,7 +130,7 @@ const EventsPage: React.FC = () => {
 
       {/* Events List */}
       {loading ? (
-        <p className="text-center">Ucitavanje...</p>
+        <p className="text-center">Učitavanje...</p>
       ) : events.length > 0 ? (
         <Row>
           {events.map((event) => (
@@ -139,7 +139,7 @@ const EventsPage: React.FC = () => {
                 <div className="d-flex justify-content-between align-items-start mb-2">
                   <h5 className="mb-0">{event.name}</h5>
                   <Badge bg={isUpcoming(event.date) ? 'success' : 'secondary'}>
-                    {isUpcoming(event.date) ? 'Predstojeji' : 'Zavrsen'}
+                    {isUpcoming(event.date) ? 'Predstojeći' : 'Završen'}
                   </Badge>
                 </div>
 
@@ -193,8 +193,8 @@ const EventsPage: React.FC = () => {
         <Card className="text-center">
           <p className="text-muted mb-0">
             {searchTerm || selectedSeason
-              ? 'Nema dogadjaja koji odgovaraju pretrazi.'
-              : 'Nema dostupnih dogadjaja.'}
+              ? 'Nema događaja koji odgovaraju pretrazi.'
+              : 'Nema dostupnih događaja.'}
           </p>
         </Card>
       )}

@@ -24,9 +24,9 @@ const RegisterPage: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!formData.username) {
-      newErrors.username = 'Korisnicko ime je obavezno.';
+      newErrors.username = 'Korisničko ime je obavezno.';
     } else if (formData.username.length < 3) {
-      newErrors.username = 'Korisnicko ime mora imati najmanje 3 karaktera.';
+      newErrors.username = 'Korisničko ime mora imati najmanje 3 karaktera.';
     }
 
     if (!formData.email) {
@@ -76,7 +76,7 @@ const RegisterPage: React.FC = () => {
       navigate('/');
     } catch (error: any) {
       setSubmitError(
-        error.response?.data?.message || 'Doslo je do greske pri registraciji.'
+        error.response?.data?.message || 'Došlo je do greške pri registraciji.'
       );
     } finally {
       setLoading(false);
@@ -96,7 +96,7 @@ const RegisterPage: React.FC = () => {
 
             <Form onSubmit={handleSubmit}>
               <InputField
-                label="Korisnicko ime"
+                label="Korisničko ime"
                 type="text"
                 name="username"
                 value={formData.username}
@@ -152,7 +152,7 @@ const RegisterPage: React.FC = () => {
             <hr />
 
             <p className="text-center text-muted mb-0">
-              Vec imate nalog?{' '}
+              Već imate nalog?{' '}
               <Link to="/login">Prijavite se</Link>
             </p>
           </Card>

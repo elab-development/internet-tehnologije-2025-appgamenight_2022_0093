@@ -22,13 +22,13 @@ const Navbar: React.FC = () => {
         <BsNavbar.Collapse id="main-navbar">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/">
-              Pocetna
+              Početna
             </Nav.Link>
             <Nav.Link as={Link} to="/events">
-              Dogadjaji
+              Događaji
             </Nav.Link>
             <Nav.Link as={Link} to="/scoreboard">
-              Rang Lista
+              Rang lista
             </Nav.Link>
           </Nav>
           <Nav>
@@ -40,19 +40,19 @@ const Navbar: React.FC = () => {
                       Dashboard
                     </NavDropdown.Item>
                     <NavDropdown.Item as={Link} to="/admin/events">
-                      Upravljanje Dogadjajima
+                      Upravljanje događajima
                     </NavDropdown.Item>
                     <NavDropdown.Item as={Link} to="/admin/games">
-                      Upravljanje Igrama
+                      Upravljanje igrama
                     </NavDropdown.Item>
                     <NavDropdown.Item as={Link} to="/admin/results">
-                      Unos Rezultata
+                      Unos rezultata
                     </NavDropdown.Item>
                   </NavDropdown>
                 )}
                 <NavDropdown title={user?.username || 'Korisnik'} id="user-dropdown">
                   <NavDropdown.Item as={Link} to="/profile">
-                    Moj Profil
+                    Moj profil
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={handleLogout}>

@@ -113,7 +113,7 @@ const ProfilePage: React.FC = () => {
 
       const response = await usersAPI.updateProfile(updateData);
       updateUser(response.data.user);
-      setSuccess('Profil uspesno azuriran.');
+      setSuccess('Profil uspešno ažuriran.');
       setEditing(false);
       setFormData((prev) => ({
         ...prev,
@@ -122,7 +122,7 @@ const ProfilePage: React.FC = () => {
         confirmPassword: ''
       }));
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Greska pri azuriranju profila.');
+      setError(err.response?.data?.message || 'Greška pri ažuriranju profila.');
     } finally {
       setSaving(false);
     }
@@ -142,7 +142,7 @@ const ProfilePage: React.FC = () => {
 
   return (
     <Container className="py-4">
-      <h2 className="mb-4">Moj Profil</h2>
+      <h2 className="mb-4">Moj profil</h2>
 
       {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
       {success && <Alert variant="success" onClose={() => setSuccess('')} dismissible>{success}</Alert>}
@@ -150,11 +150,11 @@ const ProfilePage: React.FC = () => {
       <Row>
         <Col lg={4} className="mb-4">
           {/* Profile Info */}
-          <Card title="Podaci o Nalogu">
+          <Card title="Podaci o nalogu">
             {editing ? (
               <Form>
                 <InputField
-                  label="Korisnicko ime"
+                  label="Korisničko ime"
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
@@ -169,7 +169,7 @@ const ProfilePage: React.FC = () => {
                   required
                 />
                 <hr />
-                <p className="text-muted small">Ostavite prazno ako ne zelite da promenite lozinku</p>
+                <p className="text-muted small">Ostavite prazno ako ne želite da promenite lozinku</p>
                 <InputField
                   label="Trenutna lozinka"
                   type="password"
@@ -193,7 +193,7 @@ const ProfilePage: React.FC = () => {
                 />
                 <div className="d-flex gap-2 mt-3">
                   <Button variant="primary" onClick={handleSave} loading={saving}>
-                    Sacuvaj
+                    Sačuvaj
                   </Button>
                   <Button
                     variant="outline-secondary"
@@ -215,7 +215,7 @@ const ProfilePage: React.FC = () => {
             ) : (
               <>
                 <p className="mb-2">
-                  <strong>Korisnicko ime:</strong> {user.username}
+                  <strong>Korisničko ime:</strong> {user.username}
                 </p>
                 <p className="mb-2">
                   <strong>Email:</strong> {user.email}
@@ -223,7 +223,7 @@ const ProfilePage: React.FC = () => {
                 <p className="mb-3">
                   <strong>Uloga:</strong>{' '}
                   <Badge bg={user.role === 'admin' ? 'danger' : 'primary'}>
-                    {user.role === 'admin' ? 'Administrator' : user.role === 'player' ? 'Igrac' : 'Gost'}
+                    {user.role === 'admin' ? 'Administrator' : user.role === 'player' ? 'Igrač' : 'Gost'}
                   </Badge>
                 </p>
                 <Button variant="outline-primary" onClick={() => setEditing(true)}>
@@ -242,7 +242,7 @@ const ProfilePage: React.FC = () => {
                 <h2 className="mb-0 text-primary">
                   {loading ? '...' : stats?.totalWins || 0}
                 </h2>
-                <p className="text-muted mb-0">Ukupno Pobeda</p>
+                <p className="text-muted mb-0">Ukupno pobeda</p>
               </Card>
             </Col>
             <Col sm={6} className="mb-3">
@@ -250,14 +250,14 @@ const ProfilePage: React.FC = () => {
                 <h2 className="mb-0 text-success">
                   {loading ? '...' : stats?.eventsAttended || 0}
                 </h2>
-                <p className="text-muted mb-0">Posecenih Dogadjaja</p>
+                <p className="text-muted mb-0">Posećenih događaja</p>
               </Card>
             </Col>
           </Row>
 
           {/* Wins per Game */}
           {stats?.winsPerGame && stats.winsPerGame.length > 0 && (
-            <Card title="Pobede po Igrama" className="mb-4">
+            <Card title="Pobede po igrama" className="mb-4">
               <Row>
                 {stats.winsPerGame.map((item) => (
                   <Col sm={6} md={4} key={item.gameId} className="mb-2">
@@ -273,7 +273,7 @@ const ProfilePage: React.FC = () => {
 
           {/* Upcoming Events */}
           {stats?.upcomingRegistrations && stats.upcomingRegistrations.length > 0 && (
-            <Card title="Predstojeji Dogadjaji" className="mb-4">
+            <Card title="Predstojeći događaji" className="mb-4">
               <ListGroup variant="flush">
                 {stats.upcomingRegistrations.map((reg) => (
                   <ListGroup.Item
@@ -303,7 +303,7 @@ const ProfilePage: React.FC = () => {
 
           {/* Recent Matches */}
           {stats?.recentMatches && stats.recentMatches.length > 0 && (
-            <Card title="Nedavne Pobede">
+            <Card title="Nedavne pobede">
               <ListGroup variant="flush">
                 {stats.recentMatches.map((match) => (
                   <ListGroup.Item key={match.id} className="px-0">

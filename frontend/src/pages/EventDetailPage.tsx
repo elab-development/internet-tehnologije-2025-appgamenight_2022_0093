@@ -70,7 +70,7 @@ const EventDetailPage: React.FC = () => {
         setMatches(matchesRes.data);
       } catch (err) {
         console.error('Error fetching event:', err);
-        setError('Greska pri ucitavanju dogadjaja.');
+        setError('Greška pri učitavanju događaja.');
       } finally {
         setLoading(false);
       }
@@ -88,13 +88,13 @@ const EventDetailPage: React.FC = () => {
 
     try {
       await eventsAPI.register(parseInt(id), { selectedGame });
-      setSuccess('Uspesno ste se prijavili na dogadjaj!');
+      setSuccess('Uspešno ste se prijavili na događaj!');
 
       // Refresh event data
       const response = await eventsAPI.getById(parseInt(id));
       setEvent(response.data);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Greska pri prijavi.');
+      setError(err.response?.data?.message || 'Greška pri prijavi.');
     } finally {
       setRegistering(false);
     }
@@ -109,13 +109,13 @@ const EventDetailPage: React.FC = () => {
 
     try {
       await eventsAPI.unregister(parseInt(id));
-      setSuccess('Uspesno ste se odjavili sa dogadjaja.');
+      setSuccess('Uspešno ste se odjavili sa događaja.');
 
       // Refresh event data
       const response = await eventsAPI.getById(parseInt(id));
       setEvent(response.data);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Greska pri odjavi.');
+      setError(err.response?.data?.message || 'Greška pri odjavi.');
     } finally {
       setRegistering(false);
     }
@@ -135,7 +135,7 @@ const EventDetailPage: React.FC = () => {
   if (loading) {
     return (
       <Container className="py-4">
-        <p className="text-center">Ucitavanje...</p>
+        <p className="text-center">Učitavanje...</p>
       </Container>
     );
   }
@@ -143,7 +143,7 @@ const EventDetailPage: React.FC = () => {
   if (!event) {
     return (
       <Container className="py-4">
-        <Alert variant="danger">Dogadjaj nije pronadjen.</Alert>
+        <Alert variant="danger">Događaj nije pronađen.</Alert>
         <Button onClick={() => navigate('/events')}>Nazad na listu</Button>
       </Container>
     );
@@ -173,7 +173,7 @@ const EventDetailPage: React.FC = () => {
                 )}
               </div>
               <Badge bg={isUpcoming ? 'success' : 'secondary'} className="fs-6">
-                {isUpcoming ? 'Predstojeji' : 'Zavrsen'}
+                {isUpcoming ? 'Predstojeći' : 'Završen'}
               </Badge>
             </div>
 
@@ -194,7 +194,7 @@ const EventDetailPage: React.FC = () => {
 
             {event.games && event.games.length > 0 && (
               <div className="mb-3">
-                <strong>Igre na dogadjaju:</strong>
+                <strong>Igre na događaju:</strong>
                 <div className="mt-2">
                   {event.games.map((game) => (
                     <Badge key={game.id} bg="info" className="me-2 mb-2">
@@ -208,7 +208,7 @@ const EventDetailPage: React.FC = () => {
 
           {/* Matches */}
           {matches.length > 0 && (
-            <Card title="Rezultati Partija" className="mb-4">
+            <Card title="Rezultati partija" className="mb-4">
               <ListGroup variant="flush">
                 {matches.map((match) => (
                   <ListGroup.Item
@@ -245,7 +245,7 @@ const EventDetailPage: React.FC = () => {
             <p className="mb-2">
               <strong>Prijavljeno:</strong>{' '}
               {event.registrations?.filter((r) => r.status !== 'cancelled').length || 0}
-              {event.maxParticipants ? ` / ${event.maxParticipants}` : ''} igraca
+              {event.maxParticipants ? ` / ${event.maxParticipants}` : ''} igrača
             </p>
 
             {isAuthenticated && isUpcoming && (
@@ -303,19 +303,19 @@ const EventDetailPage: React.FC = () => {
                 >
                   Prijavite se
                 </Button>{' '}
-                da biste se registrovali za dogadjaj.
+                da biste se registrovali za događaj.
               </Alert>
             )}
 
             {!isUpcoming && (
               <Alert variant="secondary" className="mb-0">
-                Ovaj dogadjaj je zavrsen.
+                Ovaj događaj je završen.
               </Alert>
             )}
           </Card>
 
           {/* Participants List */}
-          <Card title="Prijavljeni Igraci">
+          <Card title="Prijavljeni igrači">
             {event.registrations && event.registrations.length > 0 ? (
               <ListGroup variant="flush">
                 {event.registrations
@@ -335,7 +335,7 @@ const EventDetailPage: React.FC = () => {
                   ))}
               </ListGroup>
             ) : (
-              <p className="text-muted mb-0">Nema prijavljenih igraca.</p>
+              <p className="text-muted mb-0">Nema prijavljenih igrača.</p>
             )}
           </Card>
         </Col>

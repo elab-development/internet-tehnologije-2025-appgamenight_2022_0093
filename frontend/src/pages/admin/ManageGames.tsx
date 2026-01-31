@@ -87,7 +87,7 @@ const ManageGames: React.FC = () => {
     setError('');
 
     if (parseInt(formData.minPlayers) > parseInt(formData.maxPlayers)) {
-      setError('Minimalan broj igraca ne moze biti veci od maksimalnog.');
+      setError('Minimalan broj igrača ne može biti veći od maksimalnog.');
       return;
     }
 
@@ -103,16 +103,16 @@ const ManageGames: React.FC = () => {
 
       if (selectedGame) {
         await gamesAPI.update(selectedGame.id, data);
-        setSuccess('Igra uspesno azurirana.');
+        setSuccess('Igra uspešno ažurirana.');
       } else {
         await gamesAPI.create(data);
-        setSuccess('Igra uspesno kreirana.');
+        setSuccess('Igra uspešno kreirana.');
       }
 
       setShowModal(false);
       fetchGames();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Greska pri cuvanju.');
+      setError(err.response?.data?.message || 'Greška pri čuvanju.');
     } finally {
       setSaving(false);
     }
@@ -124,12 +124,12 @@ const ManageGames: React.FC = () => {
     setSaving(true);
     try {
       await gamesAPI.delete(selectedGame.id);
-      setSuccess('Igra uspesno obrisana.');
+      setSuccess('Igra uspešno obrisana.');
       setShowDeleteModal(false);
       setSelectedGame(null);
       fetchGames();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Greska pri brisanju.');
+      setError(err.response?.data?.message || 'Greška pri brisanju.');
       setShowDeleteModal(false);
     } finally {
       setSaving(false);
@@ -141,9 +141,9 @@ const ManageGames: React.FC = () => {
   return (
     <Container className="py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Upravljanje Igrama</h2>
+        <h2>Upravljanje igrama</h2>
         <Button variant="primary" onClick={openCreateModal}>
-          + Nova Igra
+          + Nova igra
         </Button>
       </div>
 
@@ -152,14 +152,14 @@ const ManageGames: React.FC = () => {
 
       <Card>
         {loading ? (
-          <p className="text-center">Ucitavanje...</p>
+          <p className="text-center">Učitavanje...</p>
         ) : (
           <Table responsive hover className="mb-0">
             <thead>
               <tr>
                 <th>Naziv</th>
-                <th>Min. igraca</th>
-                <th>Max. igraca</th>
+                <th>Min. igrača</th>
+                <th>Max. igrača</th>
                 <th>Opis</th>
                 <th style={{ width: '150px' }}>Akcije</th>
               </tr>
@@ -194,7 +194,7 @@ const ManageGames: React.FC = () => {
                         setShowDeleteModal(true);
                       }}
                     >
-                      Obrisi
+                      Obriši
                     </Button>
                   </td>
                 </tr>
@@ -207,10 +207,10 @@ const ManageGames: React.FC = () => {
       {/* Create/Edit Modal */}
       <Modal
         show={showModal}
-        title={selectedGame ? 'Izmeni Igru' : 'Nova Igra'}
+        title={selectedGame ? 'Izmeni igru' : 'Nova igra'}
         onCancel={() => setShowModal(false)}
         onConfirm={handleSave}
-        confirmText="Sacuvaj"
+        confirmText="Sačuvaj"
         loading={saving}
       >
         <Form>
@@ -222,7 +222,7 @@ const ManageGames: React.FC = () => {
             required
           />
           <InputField
-            label="Minimalan broj igraca"
+            label="Minimalan broj igrača"
             type="number"
             name="minPlayers"
             value={formData.minPlayers}
@@ -232,7 +232,7 @@ const ManageGames: React.FC = () => {
             required
           />
           <InputField
-            label="Maksimalan broj igraca"
+            label="Maksimalan broj igrača"
             type="number"
             name="maxPlayers"
             value={formData.maxPlayers}
@@ -258,16 +258,16 @@ const ManageGames: React.FC = () => {
         title="Potvrda brisanja"
         onCancel={() => setShowDeleteModal(false)}
         onConfirm={handleDelete}
-        confirmText="Obrisi"
+        confirmText="Obriši"
         confirmVariant="danger"
         loading={saving}
       >
         <p>
-          Da li ste sigurni da zelite da obrisete igru{' '}
+          Da li ste sigurni da želite da obrišete igru{' '}
           <strong>{selectedGame?.name}</strong>?
         </p>
         <p className="text-muted mb-0">
-          Igra se moze obrisati samo ako nema zapisanih partija.
+          Igra se može obrisati samo ako nema zapisanih partija.
         </p>
       </Modal>
     </Container>

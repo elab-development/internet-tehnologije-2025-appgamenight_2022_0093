@@ -68,7 +68,7 @@ const AdminDashboard: React.FC = () => {
             <h2 className="mb-0 text-primary">
               {loading ? '...' : stats.totalEvents}
             </h2>
-            <p className="text-muted mb-0">Dogadjaja</p>
+            <p className="text-muted mb-0">Događaja</p>
           </Card>
         </Col>
         <Col sm={6} md={3} className="mb-3">
@@ -98,13 +98,13 @@ const AdminDashboard: React.FC = () => {
       </Row>
 
       {/* Quick Actions */}
-      <h4 className="mb-3">Brze Akcije</h4>
+      <h4 className="mb-3">Brze akcije</h4>
       <Row>
         <Col md={4} className="mb-3">
           <Card className="h-100">
-            <h5>Upravljanje Dogadjajima</h5>
+            <h5>Upravljanje događajima</h5>
             <p className="text-muted">
-              Kreirajte, izmenite ili obrisite dogadjaje.
+              Kreirajte, izmenite ili obrišite događaje.
             </p>
             <Link to="/admin/events">
               <Button variant="primary">Otvori</Button>
@@ -113,9 +113,9 @@ const AdminDashboard: React.FC = () => {
         </Col>
         <Col md={4} className="mb-3">
           <Card className="h-100">
-            <h5>Upravljanje Igrama</h5>
+            <h5>Upravljanje igrama</h5>
             <p className="text-muted">
-              Dodajte nove igre ili izmenite postojece.
+              Dodajte nove igre ili izmenite postojeće.
             </p>
             <Link to="/admin/games">
               <Button variant="success">Otvori</Button>
@@ -124,7 +124,7 @@ const AdminDashboard: React.FC = () => {
         </Col>
         <Col md={4} className="mb-3">
           <Card className="h-100">
-            <h5>Unos Rezultata</h5>
+            <h5>Unos rezultata</h5>
             <p className="text-muted">
               Unesite rezultate odigranih partija.
             </p>

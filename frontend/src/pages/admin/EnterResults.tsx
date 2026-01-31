@@ -106,7 +106,7 @@ const EnterResults: React.FC = () => {
     setError('');
 
     if (!formData.eventId || !formData.gameId || !formData.winnerId) {
-      setError('Dogadjaj, igra i pobednik su obavezni.');
+      setError('Događaj, igra i pobednik su obavezni.');
       return;
     }
 
@@ -121,11 +121,11 @@ const EnterResults: React.FC = () => {
         notes: formData.notes || undefined
       });
 
-      setSuccess('Rezultat uspesno unesen!');
+      setSuccess('Rezultat uspešno unesen!');
       setShowModal(false);
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Greska pri unosu rezultata.');
+      setError(err.response?.data?.message || 'Greška pri unosu rezultata.');
     } finally {
       setSaving(false);
     }
@@ -137,12 +137,12 @@ const EnterResults: React.FC = () => {
     setSaving(true);
     try {
       await matchesAPI.delete(selectedMatch.id);
-      setSuccess('Rezultat uspesno obrisan.');
+      setSuccess('Rezultat uspešno obrisan.');
       setShowDeleteModal(false);
       setSelectedMatch(null);
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Greska pri brisanju.');
+      setError(err.response?.data?.message || 'Greška pri brisanju.');
     } finally {
       setSaving(false);
     }
@@ -162,9 +162,9 @@ const EnterResults: React.FC = () => {
   return (
     <Container className="py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Unos Rezultata</h2>
+        <h2>Unos rezultata</h2>
         <Button variant="primary" onClick={openCreateModal}>
-          + Novi Rezultat
+          + Novi rezultat
         </Button>
       </div>
 
@@ -173,9 +173,9 @@ const EnterResults: React.FC = () => {
 
       <Row>
         <Col lg={8}>
-          <Card title="Nedavni Rezultati">
+          <Card title="Nedavni rezultati">
             {loading ? (
-              <p className="text-center">Ucitavanje...</p>
+              <p className="text-center">Učitavanje...</p>
             ) : recentMatches.length > 0 ? (
               <ListGroup variant="flush">
                 {recentMatches.map((match) => (
@@ -206,7 +206,7 @@ const EnterResults: React.FC = () => {
                           setShowDeleteModal(true);
                         }}
                       >
-                        Obrisi
+                        Obriši
                       </Button>
                     </div>
                   </ListGroup.Item>
@@ -219,7 +219,7 @@ const EnterResults: React.FC = () => {
         </Col>
 
         <Col lg={4}>
-          <Card title="Brzi Unos">
+          <Card title="Brzi unos">
             <p className="text-muted small mb-3">
               Kliknite na dugme iznad da unesete novi rezultat partije.
             </p>
@@ -231,7 +231,7 @@ const EnterResults: React.FC = () => {
                 <Badge bg="primary">{recentMatches.length}</Badge>
               </ListGroup.Item>
               <ListGroup.Item className="d-flex justify-content-between px-0">
-                <span>Dogadjaja</span>
+                <span>Događaja</span>
                 <Badge bg="secondary">{events.length}</Badge>
               </ListGroup.Item>
               <ListGroup.Item className="d-flex justify-content-between px-0">
@@ -246,22 +246,22 @@ const EnterResults: React.FC = () => {
       {/* Create Result Modal */}
       <Modal
         show={showModal}
-        title="Unos Novog Rezultata"
+        title="Unos novog rezultata"
         onCancel={() => setShowModal(false)}
         onConfirm={handleSave}
-        confirmText="Sacuvaj"
+        confirmText="Sačuvaj"
         loading={saving}
       >
         <Form>
           <Form.Group className="mb-3">
-            <Form.Label>Dogadjaj *</Form.Label>
+            <Form.Label>Događaj *</Form.Label>
             <Form.Select
               name="eventId"
               value={formData.eventId}
               onChange={handleChange}
               required
             >
-              <option value="">Izaberite dogadjaj</option>
+              <option value="">Izaberite događaj</option>
               {events.map((event) => (
                 <option key={event.id} value={event.id}>
                   {event.name} ({formatDate(event.date)})
@@ -338,12 +338,12 @@ const EnterResults: React.FC = () => {
         title="Potvrda brisanja"
         onCancel={() => setShowDeleteModal(false)}
         onConfirm={handleDelete}
-        confirmText="Obrisi"
+        confirmText="Obriši"
         confirmVariant="danger"
         loading={saving}
       >
         <p>
-          Da li ste sigurni da zelite da obrisete ovaj rezultat?
+          Da li ste sigurni da želite da obrišete ovaj rezultat?
         </p>
         {selectedMatch && (
           <p className="text-muted mb-0">

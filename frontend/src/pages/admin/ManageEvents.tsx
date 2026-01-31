@@ -153,16 +153,16 @@ const ManageEvents: React.FC = () => {
 
       if (selectedEvent) {
         await eventsAPI.update(selectedEvent.id, data);
-        setSuccess('Dogadjaj uspesno azuriran.');
+        setSuccess('Događaj uspešno ažuriran.');
       } else {
         await eventsAPI.create(data);
-        setSuccess('Dogadjaj uspesno kreiran.');
+        setSuccess('Događaj uspešno kreiran.');
       }
 
       setShowModal(false);
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Greska pri cuvanju.');
+      setError(err.response?.data?.message || 'Greška pri čuvanju.');
     } finally {
       setSaving(false);
     }
@@ -174,12 +174,12 @@ const ManageEvents: React.FC = () => {
     setSaving(true);
     try {
       await eventsAPI.delete(selectedEvent.id);
-      setSuccess('Dogadjaj uspesno obrisan.');
+      setSuccess('Događaj uspešno obrisan.');
       setShowDeleteModal(false);
       setSelectedEvent(null);
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Greska pri brisanju.');
+      setError(err.response?.data?.message || 'Greška pri brisanju.');
     } finally {
       setSaving(false);
     }
@@ -200,9 +200,9 @@ const ManageEvents: React.FC = () => {
   return (
     <Container className="py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Upravljanje Dogadjajima</h2>
+        <h2>Upravljanje događajima</h2>
         <Button variant="primary" onClick={openCreateModal}>
-          + Novi Dogadjaj
+          + Novi događaj
         </Button>
       </div>
 
@@ -211,7 +211,7 @@ const ManageEvents: React.FC = () => {
 
       <Card>
         {loading ? (
-          <p className="text-center">Ucitavanje...</p>
+          <p className="text-center">Učitavanje...</p>
         ) : (
           <Table responsive hover className="mb-0">
             <thead>
@@ -219,7 +219,7 @@ const ManageEvents: React.FC = () => {
                 <th>Naziv</th>
                 <th>Datum</th>
                 <th>Lokacija</th>
-                <th>Max. Ucenika</th>
+                <th>Max. učesnika</th>
                 <th style={{ width: '150px' }}>Akcije</th>
               </tr>
             </thead>
@@ -229,7 +229,7 @@ const ManageEvents: React.FC = () => {
                   <td>{event.name}</td>
                   <td>{formatDate(event.date)}</td>
                   <td>{event.location || '-'}</td>
-                  <td>{event.maxParticipants || 'Neograniceno'}</td>
+                  <td>{event.maxParticipants || 'Neograničeno'}</td>
                   <td>
                     <Button
                       variant="outline-primary"
@@ -247,7 +247,7 @@ const ManageEvents: React.FC = () => {
                         setShowDeleteModal(true);
                       }}
                     >
-                      Obrisi
+                      Obriši
                     </Button>
                   </td>
                 </tr>
@@ -260,10 +260,10 @@ const ManageEvents: React.FC = () => {
       {/* Create/Edit Modal */}
       <Modal
         show={showModal}
-        title={selectedEvent ? 'Izmeni Dogadjaj' : 'Novi Dogadjaj'}
+        title={selectedEvent ? 'Izmeni događaj' : 'Novi događaj'}
         onCancel={() => setShowModal(false)}
         onConfirm={handleSave}
-        confirmText="Sacuvaj"
+        confirmText="Sačuvaj"
         loading={saving}
         size="lg"
       >
@@ -300,7 +300,7 @@ const ManageEvents: React.FC = () => {
             </Col>
             <Col md={6}>
               <InputField
-                label="Max. ucenika"
+                label="Max. učesnika"
                 type="number"
                 name="maxParticipants"
                 value={formData.maxParticipants}
@@ -333,7 +333,7 @@ const ManageEvents: React.FC = () => {
             rows={3}
           />
           <Form.Group className="mb-3">
-            <Form.Label>Igre na dogadjaju</Form.Label>
+            <Form.Label>Igre na događaju</Form.Label>
             <div>
               {games.map((game) => (
                 <Form.Check
@@ -356,15 +356,15 @@ const ManageEvents: React.FC = () => {
         title="Potvrda brisanja"
         onCancel={() => setShowDeleteModal(false)}
         onConfirm={handleDelete}
-        confirmText="Obrisi"
+        confirmText="Obriši"
         confirmVariant="danger"
         loading={saving}
       >
         <p>
-          Da li ste sigurni da zelite da obrisete dogadjaj{' '}
+          Da li ste sigurni da želite da obrišete događaj{' '}
           <strong>{selectedEvent?.name}</strong>?
         </p>
-        <p className="text-muted mb-0">Ova akcija se ne moze ponistiti.</p>
+        <p className="text-muted mb-0">Ova akcija se ne može poništiti.</p>
       </Modal>
     </Container>
   );
