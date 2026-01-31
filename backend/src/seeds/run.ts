@@ -68,6 +68,12 @@ async function seed() {
       endDate: new Date('2024-06-30')
     });
 
+    const season3 = await Season.create({
+      name: 'Prolecna Sezona 2026',
+      startDate: new Date('2026-01-01'),
+      endDate: new Date('2026-06-30')
+    });
+
     console.log('Seasons created.');
 
     // Create Games
