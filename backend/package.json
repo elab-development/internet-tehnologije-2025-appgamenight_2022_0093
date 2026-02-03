@@ -8,7 +8,8 @@
     "start": "node dist/app.js",
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
     "migrate": "ts-node src/migrations/run.ts",
-    "seed": "ts-node src/seeds/run.ts"
+    "seed": "ts-node src/seeds/run.ts",
+    "seed:users": "ts-node src/seeds/seedUsersOnly.ts"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
