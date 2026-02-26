@@ -2,14 +2,12 @@ import sequelize from '../config/database';
 
 const migrations = [
   require('./001-create-users'),
-  require('./002-create-seasons'),
-  require('./003-create-games'),
-  require('./004-create-events'),
-  require('./005-create-matches'),
-  require('./006-create-registrations'),
-  require('./007-create-event-games'),
-  require('./008-add-column-to-users'),
-  require('./009-modify-column-events')
+  require('./002-create-games'),
+  require('./003-create-events'),
+  require('./004-create-matches'),
+  require('./005-create-registrations'),
+  require('./006-add-column-to-users'),
+  require('./007-modify-column-events')
 ];
 
 async function runMigrations() {

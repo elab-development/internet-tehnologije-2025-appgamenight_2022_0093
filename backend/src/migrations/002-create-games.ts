@@ -1,7 +1,7 @@
 import { QueryInterface, DataTypes } from 'sequelize';
 
 export async function up(queryInterface: QueryInterface): Promise<void> {
-  await queryInterface.createTable('seasons', {
+  await queryInterface.createTable('games', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -11,13 +11,19 @@ export async function up(queryInterface: QueryInterface): Promise<void> {
       type: DataTypes.STRING(100),
       allowNull: false
     },
-    startDate: {
-      type: DataTypes.DATEONLY,
-      allowNull: false
+    minPlayers: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 2
     },
-    endDate: {
-      type: DataTypes.DATEONLY,
-      allowNull: false
+    maxPlayers: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 4
+    },
+    description: {
+      type: DataTypes.STRING(255),
+      allowNull: true
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -33,5 +39,5 @@ export async function up(queryInterface: QueryInterface): Promise<void> {
 }
 
 export async function down(queryInterface: QueryInterface): Promise<void> {
-  await queryInterface.dropTable('seasons');
+  await queryInterface.dropTable('games');
 }
