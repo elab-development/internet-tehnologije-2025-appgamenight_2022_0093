@@ -1,5 +1,4 @@
 import User, { UserRole } from '../models/User';
-import { Season } from '../models';
 import sequelize from '../config/database';
 
 async function seedUsersOnly() {
@@ -24,22 +23,6 @@ async function seedUsersOnly() {
       const user = await User.create(userData);
       console.log(`Created user: ${userData.email}`);
       return user;
-    };
-
-    // Helper function to create season if not exists
-    const createSeasonIfNotExists = async (seasonData: {
-      name: string;
-      startDate: Date;
-      endDate: Date;
-    }) => {
-      const existing = await Season.findOne({ where: { name: seasonData.name } });
-      if (existing) {
-        console.log(`Season ${seasonData.name} already exists, skipping...`);
-        return existing;
-      }
-      const season = await Season.create(seasonData);
-      console.log(`Created season: ${seasonData.name}`);
-      return season;
     };
 
     // Create users (without deleting existing data)
@@ -77,32 +60,6 @@ async function seedUsersOnly() {
       email: 'gost@example.com',
       password: plainPassword,
       role: 'guest' as UserRole
-    });
-
-    // Create seasons (without deleting existing data)
-    console.log('\n--- Creating seasons ---');
-    await createSeasonIfNotExists({
-      name: 'Zimska Sezona 2024',
-      startDate: new Date('2024-01-01'),
-      endDate: new Date('2024-03-31')
-    });
-
-    await createSeasonIfNotExists({
-      name: 'Prolecna Sezona 2024',
-      startDate: new Date('2024-04-01'),
-      endDate: new Date('2024-06-30')
-    });
-
-    await createSeasonIfNotExists({
-      name: 'Prolecna Sezona 2026',
-      startDate: new Date('2026-01-01'),
-      endDate: new Date('2026-06-30')
-    });
-
-    await createSeasonIfNotExists({
-      name: 'Letnja Sezona 2026',
-      startDate: new Date('2026-07-01'),
-      endDate: new Date('2026-09-30')
     });
 
     console.log('\n--- Seed completed! ---');
