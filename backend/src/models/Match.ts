@@ -7,13 +7,11 @@ interface MatchAttributes {
   gameId: number;
   winnerId: number;
   playedAt: Date;
-  roundNumber?: number;
-  notes?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-interface MatchCreationAttributes extends Optional<MatchAttributes, 'id' | 'roundNumber' | 'notes'> {}
+interface MatchCreationAttributes extends Optional<MatchAttributes, 'id'> {}
 
 class Match extends Model<MatchAttributes, MatchCreationAttributes> implements MatchAttributes {
   public id!: number;
@@ -21,8 +19,6 @@ class Match extends Model<MatchAttributes, MatchCreationAttributes> implements M
   public gameId!: number;
   public winnerId!: number;
   public playedAt!: Date;
-  public roundNumber?: number;
-  public notes?: string;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -63,14 +59,6 @@ Match.init(
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW
-    },
-    roundNumber: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    notes: {
-      type: DataTypes.TEXT,
-      allowNull: true
     }
   },
   {

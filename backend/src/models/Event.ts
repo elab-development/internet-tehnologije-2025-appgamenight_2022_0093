@@ -7,7 +7,7 @@ interface EventAttributes {
   date: Date;
   description?: string;
   location?: string;
-  seasonId: number;
+  gameId: number;
   maxParticipants?: number;
   createdAt?: Date;
   updatedAt?: Date;
@@ -21,7 +21,7 @@ class Event extends Model<EventAttributes, EventCreationAttributes> implements E
   public date!: Date;
   public description?: string;
   public location?: string;
-  public seasonId!: number;
+  public gameId!: number;
   public maxParticipants?: number;
 
   public readonly createdAt!: Date;
@@ -51,11 +51,11 @@ Event.init(
       type: DataTypes.STRING(255),
       allowNull: true
     },
-    seasonId: {
+    gameId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'seasons',
+        model: 'games',
         key: 'id'
       }
     },
