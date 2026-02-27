@@ -48,14 +48,13 @@ export const authAPI = {
 
 // Events API
 export const eventsAPI = {
-  getAll: (params?: { search?: string; seasonId?: number }) =>
+  getAll: (params?: { search?: string }) =>
     api.get('/events', { params }),
   getById: (id: number) => api.get(`/events/${id}`),
   create: (data: any) => api.post('/events', data),
   update: (id: number, data: any) => api.put(`/events/${id}`, data),
   delete: (id: number) => api.delete(`/events/${id}`),
-  register: (id: number, data?: { selectedGame?: number }) =>
-    api.post(`/events/${id}/register`, data),
+  register: (id: number) => api.post(`/events/${id}/register`),
   unregister: (id: number) => api.delete(`/events/${id}/register`)
 };
 
@@ -75,7 +74,9 @@ export const matchesAPI = {
   getById: (id: number) => api.get(`/matches/${id}`),
   create: (data: any) => api.post('/matches', data),
   update: (id: number, data: any) => api.put(`/matches/${id}`, data),
-  delete: (id: number) => api.delete(`/matches/${id}`)
+  delete: (id: number) => api.delete(`/matches/${id}`),
+  getLeaderboard: (limit?: number) =>
+    api.get('/matches/leaderboard', { params: { limit } })
 };
 
 // Users API
@@ -86,15 +87,14 @@ export const usersAPI = {
   getAll: () => api.get('/users')
 };
 
-// Scoreboard API
-export const scoreboardAPI = {
-  get: (params?: { gameId?: number; seasonId?: number; limit?: number }) =>
-    api.get('/scoreboard', { params }),
-  getGameLeaderboard: (gameId: number, limit?: number) =>
-    api.get(`/scoreboard/games/${gameId}`, { params: { limit } }),
-  getSeasons: () => api.get('/scoreboard/seasons'),
-  createSeason: (data: { name: string; startDate: string; endDate: string }) =>
-    api.post('/scoreboard/seasons', data)
+// External API
+export const externalAPI = {
+  searchBGG: (query: string) =>
+    api.get('/external/bgg/search', { params: { query } }),
+  getBGGDetails: (id: string) =>
+    api.get(`/external/bgg/${id}`),
+  getWeather: (city: string) =>
+    api.get('/external/weather', { params: { city } })
 };
 
 export default api;
