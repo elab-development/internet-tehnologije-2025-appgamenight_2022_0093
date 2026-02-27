@@ -277,7 +277,7 @@ const ManageGames: React.FC = () => {
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleBGGSearch())}
               />
               <Button
-                variant="outline-info"
+                variant="outline-primary"
                 onClick={handleBGGSearch}
                 loading={bggLoading}
               >
