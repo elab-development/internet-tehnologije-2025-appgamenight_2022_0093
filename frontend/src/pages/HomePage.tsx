@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { eventsAPI, scoreboardAPI } from '../services/api';
+import { eventsAPI, matchesAPI } from '../services/api';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import { useAuth } from '../hooks/useAuth';
@@ -13,7 +13,7 @@ interface Event {
   location?: string;
 }
 
-interface ScoreboardEntry {
+interface LeaderboardEntry {
   rank: number;
   user: { id: number; username: string };
   wins: number;
@@ -22,15 +22,15 @@ interface ScoreboardEntry {
 const HomePage: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
-  const [topPlayers, setTopPlayers] = useState<ScoreboardEntry[]>([]);
+  const [topPlayers, setTopPlayers] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [eventsRes, scoreboardRes] = await Promise.all([
+        const [eventsRes, leaderboardRes] = await Promise.all([
           eventsAPI.getAll(),
-          scoreboardAPI.get({ limit: 5 })
+          matchesAPI.getLeaderboard(5)
         ]);
 
         // Filter upcoming events
@@ -40,7 +40,7 @@ const HomePage: React.FC = () => {
           .slice(0, 3);
         setUpcomingEvents(upcoming);
 
-        setTopPlayers(scoreboardRes.data);
+        setTopPlayers(leaderboardRes.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -66,9 +66,9 @@ const HomePage: React.FC = () => {
       {/* Hero Section */}
       <Row className="mb-5 text-center">
         <Col>
-          <h1 className="display-4 mb-3">Dobro došli na Game Night</h1>
+          <h1 className="display-4 mb-3">Dobro dosli na Game Night</h1>
           <p className="lead text-muted">
-            Platforma za organizaciju turnira i praćenje rezultata društvenih igara
+            Platforma za organizaciju turnira i pracenje rezultata drustvenih igara
           </p>
           {!isAuthenticated && (
             <div className="mt-4">
@@ -79,7 +79,7 @@ const HomePage: React.FC = () => {
               </Link>
               <Link to="/events">
                 <Button variant="outline-primary" size="lg">
-                  Pregledaj događaje
+                  Pregledaj dogadjaje
                 </Button>
               </Link>
             </div>
@@ -90,9 +90,9 @@ const HomePage: React.FC = () => {
       <Row>
         {/* Upcoming Events */}
         <Col md={7} className="mb-4">
-          <h3 className="mb-4">Predstojeći događaji</h3>
+          <h3 className="mb-4">Predstojeci dogadjaji</h3>
           {loading ? (
-            <p>Učitavanje...</p>
+            <p>Ucitavanje...</p>
           ) : upcomingEvents.length > 0 ? (
             upcomingEvents.map((event) => (
               <Card key={event.id} className="mb-3">
@@ -116,22 +116,22 @@ const HomePage: React.FC = () => {
             ))
           ) : (
             <Card>
-              <p className="text-muted mb-0">Nema predstojećih događaja.</p>
+              <p className="text-muted mb-0">Nema predstojecih dogadjaja.</p>
             </Card>
           )}
           <Link to="/events">
             <Button variant="link" className="px-0 mt-2">
-              Svi događaji &rarr;
+              Svi dogadjaji &rarr;
             </Button>
           </Link>
         </Col>
 
         {/* Top Players */}
         <Col md={5} className="mb-4">
-          <h3 className="mb-4">Top igrači</h3>
+          <h3 className="mb-4">Top igraci</h3>
           <Card>
             {loading ? (
-              <p>Učitavanje...</p>
+              <p>Ucitavanje...</p>
             ) : topPlayers.length > 0 ? (
               <div className="list-group list-group-flush">
                 {topPlayers.map((entry) => (
@@ -148,13 +148,8 @@ const HomePage: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-muted mb-0">Nema podataka o igračima.</p>
+              <p className="text-muted mb-0">Nema podataka o igracima.</p>
             )}
-            <Link to="/scoreboard">
-              <Button variant="link" className="px-0 mt-3">
-                Kompletna rang lista &rarr;
-              </Button>
-            </Link>
           </Card>
         </Col>
       </Row>
@@ -163,10 +158,10 @@ const HomePage: React.FC = () => {
       <Row className="mt-5">
         <Col md={4} className="mb-4">
           <Card className="h-100 text-center">
-            <h4>Prijavi se na događaje</h4>
+            <h4>Prijavi se na dogadjaje</h4>
             <p className="text-muted">
-              Pregledaj listu predstojećih game night događaja i prijavi se za
-              učešće.
+              Pregledaj listu predstojecih game night dogadjaja i prijavi se za
+              ucesce.
             </p>
           </Card>
         </Col>
@@ -182,7 +177,7 @@ const HomePage: React.FC = () => {
           <Card className="h-100 text-center">
             <h4>Rang lista</h4>
             <p className="text-muted">
-              Penjaj se na rang listi pobedama u partijama i postani šampion sezone.
+              Penjaj se na rang listi pobedama u partijama i postani sampion.
             </p>
           </Card>
         </Col>
