@@ -1,168 +1,135 @@
 # Game Night
 
-Full-stack web aplikacija za upravljanje turnirima i rezultatima drustvenih igara.
+Platforma za organizaciju turnira i pracenje rezultata drustvenih igara.
 
-## Tehnologije
+## Tech Stack
 
-- **Frontend:** React + TypeScript + Bootstrap
-- **Backend:** Node.js + Express.js + TypeScript
-- **Baza:** MySQL + Sequelize ORM
-- **Auth:** JWT (JSON Web Tokens)
-- **DevOps:** Docker + Docker Compose
+### Backend
+- **Node.js** + **Express** + **TypeScript**
+- **Sequelize** ORM + **MySQL**
+- **JWT** autentifikacija (bcryptjs)
+- **Swagger** API dokumentacija
+- **Helmet** + **express-rate-limit** + **express-validator** (bezbednost)
+
+### Frontend
+- **React** + **TypeScript**
+- **React Bootstrap** (UI)
+- **Chart.js** (vizualizacija podataka)
+- **Axios** (HTTP klijent)
+- **React Router** (rutiranje)
+
+### DevOps
+- **Docker** + **Docker Compose**
+- **GitHub Actions** CI/CD
+- **Jest** + **Supertest** (testovi)
 
 ## Pokretanje projekta
 
-### Sa Docker-om (preporuceno)
+### Preduslovi
+- Docker i Docker Compose
 
+### Pokretanje
 ```bash
-# Pokretanje svih servisa
+cd game-night
 docker-compose up --build
-
-# Backend: http://localhost:5000
-# Frontend: http://localhost:3000
-# MySQL: localhost:3306
 ```
 
-### Bez Docker-a
+Aplikacija ce biti dostupna na:
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:5000/api
+- **Swagger Docs**: http://localhost:5000/api/docs
 
-#### Backend
-
+### Inicijalni podaci (seed)
 ```bash
-cd backend
-npm install
-npm run dev
+docker exec -it gamenight-backend npm run seed
 ```
 
-#### Frontend
-
-```bash
-cd frontend
-npm install
-npm start
-```
-
-### Migracije i Seed podaci
-
-```bash
-# U backend direktorijumu
-npm run migrate
-npm run seed
-```
+### Test nalozi
+| Uloga  | Email                  | Lozinka      |
+|--------|------------------------|--------------|
+| Admin  | admin@gamenight.com    | password123  |
+| Igrac  | marko@example.com      | password123  |
+| Igrac  | ana@example.com        | password123  |
+| Igrac  | petar@example.com      | password123  |
+| Gost   | gost@example.com       | password123  |
 
 ## Struktura projekta
 
 ```
 game-night/
-├── docker-compose.yml
 ├── backend/
-│   ├── src/
-│   │   ├── config/          # Konfiguracija baze
-│   │   ├── models/          # Sequelize modeli
-│   │   ├── controllers/     # API kontroleri
-│   │   ├── routes/          # Express rute
-│   │   ├── middleware/      # Auth middleware
-│   │   ├── migrations/      # Database migracije
-│   │   ├── seeds/           # Test podaci
-│   │   └── app.ts           # Entry point
-│   ├── package.json
-│   └── Dockerfile
+│   └── src/
+│       ├── config/         # Konfiguracija baze i Swagger-a
+│       ├── controllers/    # Kontroleri (biznis logika)
+│       ├── middleware/      # Auth i admin middleware
+│       ├── migrations/     # Migracije baze (7 fajlova, 3 tipa)
+│       ├── models/         # Sequelize modeli (5: User, Game, Event, Match, Registration)
+│       ├── routes/         # API rute sa Swagger JSDoc
+│       ├── seeds/          # Seed podaci
+│       ├── __tests__/      # Jest testovi
+│       └── app.ts          # Entry point
 ├── frontend/
-│   ├── src/
-│   │   ├── components/      # React komponente
-│   │   ├── pages/           # Stranice
-│   │   ├── hooks/           # Custom hooks
-│   │   ├── context/         # Auth context
-│   │   ├── services/        # API servis
-│   │   ├── App.tsx
-│   │   └── index.tsx
-│   ├── package.json
-│   └── Dockerfile
+│   └── src/
+│       ├── components/     # Reusable komponente (5)
+│       ├── context/        # Auth context
+│       ├── hooks/          # Custom hooks
+│       ├── pages/          # Stranice (8)
+│       ├── services/       # API servisi
+│       └── App.tsx         # Root komponenta
+├── .github/workflows/      # CI/CD pipeline
+├── docker-compose.yml      # Docker konfiguracija
 └── README.md
 ```
 
-## Modeli baze podataka
+## Modeli (5)
+1. **User** - korisnici (admin, player, guest)
+2. **Game** - drustvene igre
+3. **Event** - dogadjaji (jedan event = jedna igra)
+4. **Match** - rezultati partija
+5. **Registration** - prijave na dogadjaje
 
-1. **User** - Korisnici sistema (admin, player, guest)
-2. **Season** - Sezone takmicenja
-3. **Game** - Drustvene igre
-4. **Event** - Game night dogadjaji
-5. **Match** - Odigrane partije sa rezultatima
-6. **Registration** - Prijave na dogadjaje
-7. **EventGame** - Pivot tabela za Event-Game relaciju
+## Migracije (3 tipa)
+1. **CREATE TABLE** - kreiranje tabela (001-005)
+2. **ADD COLUMN** - dodavanje kolone (006)
+3. **MODIFY COLUMN** - izmena kolone (007)
 
-## API Endpoints
+## API Dokumentacija
+Swagger UI dostupan na `/api/docs` nakon pokretanja backend-a.
 
-### Auth
+### Glavni endpointi:
 - `POST /api/auth/register` - Registracija
 - `POST /api/auth/login` - Prijava
-- `POST /api/auth/logout` - Odjava
-- `GET /api/auth/me` - Trenutni korisnik
-
-### Events
 - `GET /api/events` - Lista dogadjaja
-- `GET /api/events/:id` - Detalji dogadjaja
-- `POST /api/events` - Kreiranje (admin)
-- `PUT /api/events/:id` - Izmena (admin)
-- `DELETE /api/events/:id` - Brisanje (admin)
 - `POST /api/events/:id/register` - Prijava na dogadjaj
-- `DELETE /api/events/:id/register` - Odjava sa dogadjaja
+- `GET /api/matches/leaderboard` - Rang lista
+- `GET /api/external/bgg/search` - BoardGameGeek pretraga
+- `GET /api/external/weather` - Vremenska prognoza
 
-### Games
-- `GET /api/games` - Lista igara
-- `POST /api/games` - Dodavanje (admin)
-- `PUT /api/games/:id` - Izmena (admin)
-- `DELETE /api/games/:id` - Brisanje (admin)
+## Eksterni API-ji
+1. **BoardGameGeek XML API** - pretraga i detalji drustvenih igara
+2. **OpenWeatherMap API** - vremenska prognoza za lokaciju dogadjaja
 
-### Matches
-- `GET /api/matches` - Lista partija
-- `POST /api/matches` - Unos rezultata (admin)
-- `PUT /api/matches/:id` - Izmena (admin)
-- `DELETE /api/matches/:id` - Brisanje (admin)
-
-### Scoreboard
-- `GET /api/scoreboard` - Rang lista
-- `GET /api/scoreboard/games/:id` - Rang lista po igri
-- `GET /api/scoreboard/seasons` - Lista sezona
-
-### Users
-- `GET /api/users/me` - Profil korisnika
-- `GET /api/users/me/stats` - Statistika korisnika
-- `PUT /api/users/me` - Azuriranje profila
+## Bezbednost
+- **Helmet** - HTTP security headers
+- **express-rate-limit** - zastita od brute force napada
+- **bcryptjs** - hesiranje lozinki
+- **JWT** - autentifikacija tokenom
+- **CORS** - kontrola pristupa
 
 ## Tipovi korisnika
-
 1. **Admin** - Puni pristup, upravljanje dogadjajima i unosom rezultata
 2. **Player** - Prijava na dogadjaje, pregled statistike
 3. **Guest** - Samo pregled, bez prijave na dogadjaje
 
-## Test kredencijali (nakon seed-a)
-
-- **Admin:** admin@gamenight.com / password123
-- **Player:** marko@example.com / password123
-
-## Funkcionalnosti
-
-### Frontend
-- Pretraga dogadjaja sa debounce-om
-- Filtriranje rang liste po igri i sezoni
-- Real-time form validacija
-- Responzivan dizajn (Bootstrap)
-- Protected routes za autentifikovane korisnike
-- Admin panel sa CRUD operacijama
-
-### Backend
-- JWT autentifikacija
-- Role-based access control
-- RESTful API
-- Sequelize ORM sa relacijama
-- 3 tipa migracija (kreiranje, dodavanje kolone, izmena kolone)
-
-## Development
-
-### Environment varijable
-
-Backend (`.env`):
+## Testovi
+```bash
+cd backend
+npm test
 ```
+
+## Environment varijable
+```env
+# Backend
 DB_HOST=localhost
 DB_PORT=3306
 DB_NAME=gamenight
@@ -170,9 +137,31 @@ DB_USER=gamenight
 DB_PASSWORD=gamenightpass
 JWT_SECRET=your-secret-key
 PORT=5000
+OPENWEATHER_API_KEY=your-api-key
+
+# Frontend
+REACT_APP_API_URL=http://localhost:5000/api
 ```
 
-Frontend:
+## Razvoj bez Docker-a
+
+### Backend
+```bash
+cd backend
+npm install
+npm run dev
 ```
-REACT_APP_API_URL=http://localhost:5000/api
+
+### Frontend
+```bash
+cd frontend
+npm install
+npm start
+```
+
+### Migracije i Seed
+```bash
+cd backend
+npm run migrate
+npm run seed
 ```
