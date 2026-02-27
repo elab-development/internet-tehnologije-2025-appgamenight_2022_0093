@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Table, Form, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { eventsAPI, gamesAPI, scoreboardAPI } from '../../services/api';
+import { eventsAPI, gamesAPI } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -13,17 +13,12 @@ interface Event {
   name: string;
   date: string;
   location?: string;
-  seasonId: number;
+  gameId: number;
   maxParticipants?: number;
   description?: string;
 }
 
 interface Game {
-  id: number;
-  name: string;
-}
-
-interface Season {
   id: number;
   name: string;
 }
@@ -34,7 +29,6 @@ const ManageEvents: React.FC = () => {
 
   const [events, setEvents] = useState<Event[]>([]);
   const [games, setGames] = useState<Game[]>([]);
-  const [seasons, setSeasons] = useState<Season[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -48,9 +42,8 @@ const ManageEvents: React.FC = () => {
     date: '',
     location: '',
     description: '',
-    seasonId: '',
-    maxParticipants: '',
-    gameIds: [] as number[]
+    gameId: '',
+    maxParticipants: ''
   });
 
   useEffect(() => {
@@ -64,14 +57,12 @@ const ManageEvents: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const [eventsRes, gamesRes, seasonsRes] = await Promise.all([
+      const [eventsRes, gamesRes] = await Promise.all([
         eventsAPI.getAll(),
-        gamesAPI.getAll(),
-        scoreboardAPI.getSeasons()
+        gamesAPI.getAll()
       ]);
       setEvents(eventsRes.data);
       setGames(gamesRes.data);
-      setSeasons(seasonsRes.data);
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
@@ -84,15 +75,6 @@ const ManageEvents: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleGameSelect = (gameId: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      gameIds: prev.gameIds.includes(gameId)
-        ? prev.gameIds.filter((id) => id !== gameId)
-        : [...prev.gameIds, gameId]
-    }));
-  };
-
   const openCreateModal = () => {
     setSelectedEvent(null);
     setFormData({
@@ -100,9 +82,8 @@ const ManageEvents: React.FC = () => {
       date: '',
       location: '',
       description: '',
-      seasonId: seasons.length > 0 ? String(seasons[0].id) : '',
-      maxParticipants: '',
-      gameIds: []
+      gameId: games.length > 0 ? String(games[0].id) : '',
+      maxParticipants: ''
     });
     setShowModal(true);
   };
@@ -114,9 +95,8 @@ const ManageEvents: React.FC = () => {
       date: new Date(event.date).toISOString().slice(0, 16),
       location: event.location || '',
       description: event.description || '',
-      seasonId: String(event.seasonId),
-      maxParticipants: event.maxParticipants ? String(event.maxParticipants) : '',
-      gameIds: []
+      gameId: String(event.gameId),
+      maxParticipants: event.maxParticipants ? String(event.maxParticipants) : ''
     });
     setShowModal(true);
   };
@@ -124,7 +104,6 @@ const ManageEvents: React.FC = () => {
   const handleSave = async () => {
     setError('');
 
-    // Validate required fields
     if (!formData.name || !formData.name.trim()) {
       setError('Naziv je obavezan.');
       return;
@@ -133,8 +112,8 @@ const ManageEvents: React.FC = () => {
       setError('Datum je obavezan.');
       return;
     }
-    if (!formData.seasonId) {
-      setError('Sezona je obavezna.');
+    if (!formData.gameId) {
+      setError('Igra je obavezna.');
       return;
     }
 
@@ -146,23 +125,22 @@ const ManageEvents: React.FC = () => {
         date: formData.date,
         location: formData.location || undefined,
         description: formData.description || undefined,
-        seasonId: parseInt(formData.seasonId),
-        maxParticipants: formData.maxParticipants ? parseInt(formData.maxParticipants) : undefined,
-        gameIds: formData.gameIds.length > 0 ? formData.gameIds : undefined
+        gameId: parseInt(formData.gameId),
+        maxParticipants: formData.maxParticipants ? parseInt(formData.maxParticipants) : undefined
       };
 
       if (selectedEvent) {
         await eventsAPI.update(selectedEvent.id, data);
-        setSuccess('Događaj uspešno ažuriran.');
+        setSuccess('Dogadjaj uspesno azuriran.');
       } else {
         await eventsAPI.create(data);
-        setSuccess('Događaj uspešno kreiran.');
+        setSuccess('Dogadjaj uspesno kreiran.');
       }
 
       setShowModal(false);
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Greška pri čuvanju.');
+      setError(err.response?.data?.message || 'Greska pri cuvanju.');
     } finally {
       setSaving(false);
     }
@@ -174,12 +152,12 @@ const ManageEvents: React.FC = () => {
     setSaving(true);
     try {
       await eventsAPI.delete(selectedEvent.id);
-      setSuccess('Događaj uspešno obrisan.');
+      setSuccess('Dogadjaj uspesno obrisan.');
       setShowDeleteModal(false);
       setSelectedEvent(null);
       fetchData();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Greška pri brisanju.');
+      setError(err.response?.data?.message || 'Greska pri brisanju.');
     } finally {
       setSaving(false);
     }
@@ -200,9 +178,9 @@ const ManageEvents: React.FC = () => {
   return (
     <Container className="py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Upravljanje događajima</h2>
+        <h2>Upravljanje dogadjajima</h2>
         <Button variant="primary" onClick={openCreateModal}>
-          + Novi događaj
+          + Novi dogadjaj
         </Button>
       </div>
 
@@ -211,7 +189,7 @@ const ManageEvents: React.FC = () => {
 
       <Card>
         {loading ? (
-          <p className="text-center">Učitavanje...</p>
+          <p className="text-center">Ucitavanje...</p>
         ) : (
           <Table responsive hover className="mb-0">
             <thead>
@@ -219,7 +197,7 @@ const ManageEvents: React.FC = () => {
                 <th>Naziv</th>
                 <th>Datum</th>
                 <th>Lokacija</th>
-                <th>Max. učesnika</th>
+                <th>Max. ucesnika</th>
                 <th style={{ width: '150px' }}>Akcije</th>
               </tr>
             </thead>
@@ -229,7 +207,7 @@ const ManageEvents: React.FC = () => {
                   <td>{event.name}</td>
                   <td>{formatDate(event.date)}</td>
                   <td>{event.location || '-'}</td>
-                  <td>{event.maxParticipants || 'Neograničeno'}</td>
+                  <td>{event.maxParticipants || 'Neograniceno'}</td>
                   <td>
                     <Button
                       variant="outline-primary"
@@ -247,7 +225,7 @@ const ManageEvents: React.FC = () => {
                         setShowDeleteModal(true);
                       }}
                     >
-                      Obriši
+                      Obrisi
                     </Button>
                   </td>
                 </tr>
@@ -260,10 +238,10 @@ const ManageEvents: React.FC = () => {
       {/* Create/Edit Modal */}
       <Modal
         show={showModal}
-        title={selectedEvent ? 'Izmeni događaj' : 'Novi događaj'}
+        title={selectedEvent ? 'Izmeni dogadjaj' : 'Novi dogadjaj'}
         onCancel={() => setShowModal(false)}
         onConfirm={handleSave}
-        confirmText="Sačuvaj"
+        confirmText="Sacuvaj"
         loading={saving}
         size="lg"
       >
@@ -300,7 +278,7 @@ const ManageEvents: React.FC = () => {
             </Col>
             <Col md={6}>
               <InputField
-                label="Max. učesnika"
+                label="Max. ucesnika"
                 type="number"
                 name="maxParticipants"
                 value={formData.maxParticipants}
@@ -310,16 +288,17 @@ const ManageEvents: React.FC = () => {
             </Col>
           </Row>
           <Form.Group className="mb-3">
-            <Form.Label>Sezona</Form.Label>
+            <Form.Label>Igra</Form.Label>
             <Form.Select
-              name="seasonId"
-              value={formData.seasonId}
+              name="gameId"
+              value={formData.gameId}
               onChange={handleChange}
               required
             >
-              {seasons.map((season) => (
-                <option key={season.id} value={season.id}>
-                  {season.name}
+              <option value="">Izaberite igru...</option>
+              {games.map((game) => (
+                <option key={game.id} value={game.id}>
+                  {game.name}
                 </option>
               ))}
             </Form.Select>
@@ -332,21 +311,6 @@ const ManageEvents: React.FC = () => {
             onChange={handleChange}
             rows={3}
           />
-          <Form.Group className="mb-3">
-            <Form.Label>Igre na događaju</Form.Label>
-            <div>
-              {games.map((game) => (
-                <Form.Check
-                  key={game.id}
-                  inline
-                  type="checkbox"
-                  label={game.name}
-                  checked={formData.gameIds.includes(game.id)}
-                  onChange={() => handleGameSelect(game.id)}
-                />
-              ))}
-            </div>
-          </Form.Group>
         </Form>
       </Modal>
 
@@ -356,15 +320,15 @@ const ManageEvents: React.FC = () => {
         title="Potvrda brisanja"
         onCancel={() => setShowDeleteModal(false)}
         onConfirm={handleDelete}
-        confirmText="Obriši"
+        confirmText="Obrisi"
         confirmVariant="danger"
         loading={saving}
       >
         <p>
-          Da li ste sigurni da želite da obrišete događaj{' '}
+          Da li ste sigurni da zelite da obrisete dogadjaj{' '}
           <strong>{selectedEvent?.name}</strong>?
         </p>
-        <p className="text-muted mb-0">Ova akcija se ne može poništiti.</p>
+        <p className="text-muted mb-0">Ova akcija se ne moze ponistiti.</p>
       </Modal>
     </Container>
   );

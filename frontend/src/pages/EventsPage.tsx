@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Row, Col, Form, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { eventsAPI, scoreboardAPI } from '../services/api';
+import { eventsAPI } from '../services/api';
 import { useDebounce } from '../hooks/useFetch';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
-import InputField from '../components/common/InputField';
 
 interface Event {
   id: number;
@@ -14,22 +13,14 @@ interface Event {
   description?: string;
   location?: string;
   maxParticipants?: number;
-  season?: { id: number; name: string };
-  games?: { id: number; name: string }[];
+  game?: { id: number; name: string };
   registrations?: { id: number; user: { username: string } }[];
-}
-
-interface Season {
-  id: number;
-  name: string;
 }
 
 const EventsPage: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
-  const [seasons, setSeasons] = useState<Season[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSeason, setSelectedSeason] = useState<string>('');
 
   const debouncedSearch = useDebounce(searchTerm, 300);
 
@@ -38,7 +29,6 @@ const EventsPage: React.FC = () => {
     try {
       const params: any = {};
       if (debouncedSearch) params.search = debouncedSearch;
-      if (selectedSeason) params.seasonId = selectedSeason;
 
       const response = await eventsAPI.getAll(params);
       setEvents(response.data);
@@ -47,23 +37,11 @@ const EventsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, selectedSeason]);
+  }, [debouncedSearch]);
 
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
-
-  useEffect(() => {
-    const fetchSeasons = async () => {
-      try {
-        const response = await scoreboardAPI.getSeasons();
-        setSeasons(response.data);
-      } catch (error) {
-        console.error('Error fetching seasons:', error);
-      }
-    };
-    fetchSeasons();
-  }, []);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -82,45 +60,26 @@ const EventsPage: React.FC = () => {
 
   return (
     <Container className="py-4">
-      <h2 className="mb-4">Događaji</h2>
+      <h2 className="mb-4">Dogadjaji</h2>
 
-      {/* Filters */}
+      {/* Search Filter */}
       <Card className="mb-4">
         <Row className="align-items-end">
-          <Col md={6} className="mb-3 mb-md-0">
+          <Col md={9} className="mb-3 mb-md-0">
             <Form.Group>
               <Form.Label>Pretraga</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Pretražite događaje..."
+                placeholder="Pretrazite dogadjaje..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </Form.Group>
           </Col>
-          <Col md={4} className="mb-3 mb-md-0">
-            <Form.Group>
-              <Form.Label>Sezona</Form.Label>
-              <Form.Select
-                value={selectedSeason}
-                onChange={(e) => setSelectedSeason(e.target.value)}
-              >
-                <option value="">Sve sezone</option>
-                {seasons.map((season) => (
-                  <option key={season.id} value={season.id}>
-                    {season.name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
-          </Col>
-          <Col md={2}>
+          <Col md={3}>
             <Button
               variant="outline-secondary"
-              onClick={() => {
-                setSearchTerm('');
-                setSelectedSeason('');
-              }}
+              onClick={() => setSearchTerm('')}
             >
               Resetuj
             </Button>
@@ -130,7 +89,7 @@ const EventsPage: React.FC = () => {
 
       {/* Events List */}
       {loading ? (
-        <p className="text-center">Učitavanje...</p>
+        <p className="text-center">Ucitavanje...</p>
       ) : events.length > 0 ? (
         <Row>
           {events.map((event) => (
@@ -139,7 +98,7 @@ const EventsPage: React.FC = () => {
                 <div className="d-flex justify-content-between align-items-start mb-2">
                   <h5 className="mb-0">{event.name}</h5>
                   <Badge bg={isUpcoming(event.date) ? 'success' : 'secondary'}>
-                    {isUpcoming(event.date) ? 'Predstojeći' : 'Završen'}
+                    {isUpcoming(event.date) ? 'Predstojeci' : 'Zavrsen'}
                   </Badge>
                 </div>
 
@@ -161,13 +120,9 @@ const EventsPage: React.FC = () => {
                   </p>
                 )}
 
-                {event.games && event.games.length > 0 && (
+                {event.game && (
                   <div className="mb-3">
-                    {event.games.map((game) => (
-                      <Badge key={game.id} bg="info" className="me-1">
-                        {game.name}
-                      </Badge>
-                    ))}
+                    <Badge bg="info">{event.game.name}</Badge>
                   </div>
                 )}
 
@@ -192,9 +147,9 @@ const EventsPage: React.FC = () => {
       ) : (
         <Card className="text-center">
           <p className="text-muted mb-0">
-            {searchTerm || selectedSeason
-              ? 'Nema događaja koji odgovaraju pretrazi.'
-              : 'Nema dostupnih događaja.'}
+            {searchTerm
+              ? 'Nema dogadjaja koji odgovaraju pretrazi.'
+              : 'Nema dostupnih dogadjaja.'}
           </p>
         </Card>
       )}

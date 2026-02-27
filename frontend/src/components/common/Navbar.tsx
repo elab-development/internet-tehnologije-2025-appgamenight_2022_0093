@@ -22,13 +22,10 @@ const Navbar: React.FC = () => {
         <BsNavbar.Collapse id="main-navbar">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/">
-              Početna
+              Pocetna
             </Nav.Link>
             <Nav.Link as={Link} to="/events">
-              Događaji
-            </Nav.Link>
-            <Nav.Link as={Link} to="/scoreboard">
-              Rang lista
+              Dogadjaji
             </Nav.Link>
           </Nav>
           <Nav>
@@ -36,17 +33,11 @@ const Navbar: React.FC = () => {
               <>
                 {isAdmin && (
                   <NavDropdown title="Admin" id="admin-dropdown">
-                    <NavDropdown.Item as={Link} to="/admin">
-                      Dashboard
-                    </NavDropdown.Item>
                     <NavDropdown.Item as={Link} to="/admin/events">
-                      Upravljanje događajima
+                      Upravljanje dogadjajima
                     </NavDropdown.Item>
                     <NavDropdown.Item as={Link} to="/admin/games">
                       Upravljanje igrama
-                    </NavDropdown.Item>
-                    <NavDropdown.Item as={Link} to="/admin/results">
-                      Unos rezultata
                     </NavDropdown.Item>
                   </NavDropdown>
                 )}

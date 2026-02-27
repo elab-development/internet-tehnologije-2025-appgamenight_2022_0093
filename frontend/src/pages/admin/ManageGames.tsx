@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Table, Form, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Table, Form, Alert, ListGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { gamesAPI } from '../../services/api';
+import { gamesAPI, externalAPI } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -16,6 +16,12 @@ interface Game {
   description?: string;
 }
 
+interface BGGResult {
+  bggId: string;
+  name: string;
+  yearPublished?: string;
+}
+
 const ManageGames: React.FC = () => {
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
@@ -28,6 +34,11 @@ const ManageGames: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // BGG search
+  const [bggQuery, setBggQuery] = useState('');
+  const [bggResults, setBggResults] = useState<BGGResult[]>([]);
+  const [bggLoading, setBggLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -69,6 +80,8 @@ const ManageGames: React.FC = () => {
       maxPlayers: '4',
       description: ''
     });
+    setBggResults([]);
+    setBggQuery('');
     setShowModal(true);
   };
 
@@ -80,14 +93,51 @@ const ManageGames: React.FC = () => {
       maxPlayers: String(game.maxPlayers),
       description: game.description || ''
     });
+    setBggResults([]);
+    setBggQuery('');
     setShowModal(true);
+  };
+
+  const handleBGGSearch = async () => {
+    if (!bggQuery.trim()) return;
+
+    setBggLoading(true);
+    try {
+      const response = await externalAPI.searchBGG(bggQuery);
+      setBggResults(response.data);
+    } catch (err) {
+      console.error('BGG search error:', err);
+    } finally {
+      setBggLoading(false);
+    }
+  };
+
+  const handleBGGSelect = async (bggId: string) => {
+    setBggLoading(true);
+    try {
+      const response = await externalAPI.getBGGDetails(bggId);
+      const game = response.data;
+      setFormData({
+        name: game.name || '',
+        minPlayers: String(game.minPlayers || 2),
+        maxPlayers: String(game.maxPlayers || 4),
+        description: game.description
+          ? game.description.replace(/<[^>]*>/g, '').substring(0, 500)
+          : ''
+      });
+      setBggResults([]);
+    } catch (err) {
+      console.error('BGG details error:', err);
+    } finally {
+      setBggLoading(false);
+    }
   };
 
   const handleSave = async () => {
     setError('');
 
     if (parseInt(formData.minPlayers) > parseInt(formData.maxPlayers)) {
-      setError('Minimalan broj igrača ne može biti veći od maksimalnog.');
+      setError('Minimalan broj igraca ne moze biti veci od maksimalnog.');
       return;
     }
 
@@ -103,16 +153,16 @@ const ManageGames: React.FC = () => {
 
       if (selectedGame) {
         await gamesAPI.update(selectedGame.id, data);
-        setSuccess('Igra uspešno ažurirana.');
+        setSuccess('Igra uspesno azurirana.');
       } else {
         await gamesAPI.create(data);
-        setSuccess('Igra uspešno kreirana.');
+        setSuccess('Igra uspesno kreirana.');
       }
 
       setShowModal(false);
       fetchGames();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Greška pri čuvanju.');
+      setError(err.response?.data?.message || 'Greska pri cuvanju.');
     } finally {
       setSaving(false);
     }
@@ -124,12 +174,12 @@ const ManageGames: React.FC = () => {
     setSaving(true);
     try {
       await gamesAPI.delete(selectedGame.id);
-      setSuccess('Igra uspešno obrisana.');
+      setSuccess('Igra uspesno obrisana.');
       setShowDeleteModal(false);
       setSelectedGame(null);
       fetchGames();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Greška pri brisanju.');
+      setError(err.response?.data?.message || 'Greska pri brisanju.');
       setShowDeleteModal(false);
     } finally {
       setSaving(false);
@@ -152,14 +202,14 @@ const ManageGames: React.FC = () => {
 
       <Card>
         {loading ? (
-          <p className="text-center">Učitavanje...</p>
+          <p className="text-center">Ucitavanje...</p>
         ) : (
           <Table responsive hover className="mb-0">
             <thead>
               <tr>
                 <th>Naziv</th>
-                <th>Min. igrača</th>
-                <th>Max. igrača</th>
+                <th>Min. igraca</th>
+                <th>Max. igraca</th>
                 <th>Opis</th>
                 <th style={{ width: '150px' }}>Akcije</th>
               </tr>
@@ -194,7 +244,7 @@ const ManageGames: React.FC = () => {
                         setShowDeleteModal(true);
                       }}
                     >
-                      Obriši
+                      Obrisi
                     </Button>
                   </td>
                 </tr>
@@ -210,10 +260,49 @@ const ManageGames: React.FC = () => {
         title={selectedGame ? 'Izmeni igru' : 'Nova igra'}
         onCancel={() => setShowModal(false)}
         onConfirm={handleSave}
-        confirmText="Sačuvaj"
+        confirmText="Sacuvaj"
         loading={saving}
+        size="lg"
       >
         <Form>
+          {/* BGG Search */}
+          <div className="mb-3 p-3 bg-light rounded">
+            <Form.Label className="fw-bold">Pretrazi BoardGameGeek</Form.Label>
+            <div className="d-flex gap-2">
+              <Form.Control
+                type="text"
+                placeholder="Naziv igre na BGG..."
+                value={bggQuery}
+                onChange={(e) => setBggQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleBGGSearch())}
+              />
+              <Button
+                variant="outline-primary"
+                onClick={handleBGGSearch}
+                loading={bggLoading}
+              >
+                Pretrazi
+              </Button>
+            </div>
+            {bggResults.length > 0 && (
+              <ListGroup className="mt-2" style={{ maxHeight: '200px', overflow: 'auto' }}>
+                {bggResults.map((result) => (
+                  <ListGroup.Item
+                    key={result.bggId}
+                    action
+                    onClick={() => handleBGGSelect(result.bggId)}
+                    className="d-flex justify-content-between"
+                  >
+                    <span>{result.name}</span>
+                    {result.yearPublished && (
+                      <small className="text-muted">({result.yearPublished})</small>
+                    )}
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            )}
+          </div>
+
           <InputField
             label="Naziv"
             name="name"
@@ -221,26 +310,32 @@ const ManageGames: React.FC = () => {
             onChange={handleChange}
             required
           />
-          <InputField
-            label="Minimalan broj igrača"
-            type="number"
-            name="minPlayers"
-            value={formData.minPlayers}
-            onChange={handleChange}
-            min={1}
-            max={20}
-            required
-          />
-          <InputField
-            label="Maksimalan broj igrača"
-            type="number"
-            name="maxPlayers"
-            value={formData.maxPlayers}
-            onChange={handleChange}
-            min={1}
-            max={20}
-            required
-          />
+          <Row>
+            <Col md={6}>
+              <InputField
+                label="Minimalan broj igraca"
+                type="number"
+                name="minPlayers"
+                value={formData.minPlayers}
+                onChange={handleChange}
+                min={1}
+                max={20}
+                required
+              />
+            </Col>
+            <Col md={6}>
+              <InputField
+                label="Maksimalan broj igraca"
+                type="number"
+                name="maxPlayers"
+                value={formData.maxPlayers}
+                onChange={handleChange}
+                min={1}
+                max={20}
+                required
+              />
+            </Col>
+          </Row>
           <InputField
             label="Opis"
             type="textarea"
@@ -258,16 +353,16 @@ const ManageGames: React.FC = () => {
         title="Potvrda brisanja"
         onCancel={() => setShowDeleteModal(false)}
         onConfirm={handleDelete}
-        confirmText="Obriši"
+        confirmText="Obrisi"
         confirmVariant="danger"
         loading={saving}
       >
         <p>
-          Da li ste sigurni da želite da obrišete igru{' '}
+          Da li ste sigurni da zelite da obrisete igru{' '}
           <strong>{selectedGame?.name}</strong>?
         </p>
         <p className="text-muted mb-0">
-          Igra se može obrisati samo ako nema zapisanih partija.
+          Igra se moze obrisati samo ako nema zapisanih partija.
         </p>
       </Modal>
     </Container>

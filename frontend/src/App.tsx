@@ -10,14 +10,11 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import EventsPage from './pages/EventsPage';
 import EventDetailPage from './pages/EventDetailPage';
-import ScoreboardPage from './pages/ScoreboardPage';
 import ProfilePage from './pages/ProfilePage';
 
 // Admin Pages
-import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageEvents from './pages/admin/ManageEvents';
 import ManageGames from './pages/admin/ManageGames';
-import EnterResults from './pages/admin/EnterResults';
 
 // Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -85,7 +82,6 @@ const AppRoutes: React.FC = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/events/:id" element={<EventDetailPage />} />
-        <Route path="/scoreboard" element={<ScoreboardPage />} />
 
         {/* Protected Routes */}
         <Route
@@ -99,14 +95,6 @@ const AppRoutes: React.FC = () => {
 
         {/* Admin Routes */}
         <Route
-          path="/admin"
-          element={
-            <ProtectedRoute requireAuth requireAdmin>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="/admin/events"
           element={
             <ProtectedRoute requireAuth requireAdmin>
@@ -119,14 +107,6 @@ const AppRoutes: React.FC = () => {
           element={
             <ProtectedRoute requireAuth requireAdmin>
               <ManageGames />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/results"
-          element={
-            <ProtectedRoute requireAuth requireAdmin>
-              <EnterResults />
             </ProtectedRoute>
           }
         />
