@@ -114,7 +114,7 @@ export const getUserStats = async (req: AuthRequest, res: Response): Promise<voi
 
     // Get events attended
     const eventsAttended = await Registration.count({
-      where: { userId, status: 'confirmed' }
+      where: { userId }
     });
 
     // Get recent matches
@@ -130,7 +130,7 @@ export const getUserStats = async (req: AuthRequest, res: Response): Promise<voi
 
     // Get upcoming registrations
     const upcomingRegistrations = await Registration.findAll({
-      where: { userId, status: { [Op.ne]: 'cancelled' } },
+      where: { userId },
       include: [{
         model: Event,
         as: 'event',

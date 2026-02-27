@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Match, User, Game, Event } from '../models';
 import { AuthRequest } from '../middleware/authMiddleware';
+import sequelize from '../config/database';
 
 export const getAllMatches = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -60,7 +61,7 @@ export const getMatchById = async (req: Request, res: Response): Promise<void> =
 
 export const createMatch = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { eventId, gameId, winnerId, playedAt, roundNumber, notes } = req.body;
+    const { eventId, gameId, winnerId, playedAt } = req.body;
 
     if (!eventId || !gameId || !winnerId) {
       res.status(400).json({ message: 'Event, igra i pobednik su obavezni.' });
@@ -92,9 +93,7 @@ export const createMatch = async (req: AuthRequest, res: Response): Promise<void
       eventId,
       gameId,
       winnerId,
-      playedAt: playedAt || new Date(),
-      roundNumber,
-      notes
+      playedAt: playedAt || new Date()
     });
 
     const createdMatch = await Match.findByPk(match.id, {
@@ -115,7 +114,7 @@ export const createMatch = async (req: AuthRequest, res: Response): Promise<void
 export const updateMatch = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const { winnerId, playedAt, roundNumber, notes } = req.body;
+    const { winnerId, playedAt } = req.body;
 
     const match = await Match.findByPk(id);
 
@@ -134,9 +133,7 @@ export const updateMatch = async (req: AuthRequest, res: Response): Promise<void
 
     await match.update({
       winnerId: winnerId || match.winnerId,
-      playedAt: playedAt || match.playedAt,
-      roundNumber: roundNumber !== undefined ? roundNumber : match.roundNumber,
-      notes: notes !== undefined ? notes : match.notes
+      playedAt: playedAt || match.playedAt
     });
 
     const updatedMatch = await Match.findByPk(match.id, {
@@ -171,5 +168,35 @@ export const deleteMatch = async (req: AuthRequest, res: Response): Promise<void
   } catch (error) {
     console.error('Delete match error:', error);
     res.status(500).json({ message: 'Greska pri brisanju partije.' });
+  }
+};
+
+export const getLeaderboard = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { limit } = req.query;
+
+    const leaderboard = await Match.findAll({
+      attributes: [
+        'winnerId',
+        [sequelize.fn('COUNT', sequelize.col('Match.id')), 'wins']
+      ],
+      include: [
+        { model: User, as: 'winner', attributes: ['id', 'username', 'avatar'] }
+      ],
+      group: ['winnerId', 'winner.id', 'winner.username', 'winner.avatar'],
+      order: [[sequelize.fn('COUNT', sequelize.col('Match.id')), 'DESC']],
+      limit: limit ? parseInt(limit as string) : 10
+    });
+
+    const result = leaderboard.map((entry: any, index: number) => ({
+      rank: index + 1,
+      user: entry.winner,
+      wins: parseInt(entry.dataValues.wins)
+    }));
+
+    res.json(result);
+  } catch (error) {
+    console.error('Get leaderboard error:', error);
+    res.status(500).json({ message: 'Greska pri dobijanju rang liste.' });
   }
 };

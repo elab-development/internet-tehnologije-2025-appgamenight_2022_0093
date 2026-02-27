@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { Event, Season, Game, Registration, User, EventGame } from '../models';
+import { Event, Game, Registration, User, Match } from '../models';
 import { AuthRequest } from '../middleware/authMiddleware';
 import { Op } from 'sequelize';
 
 export const getAllEvents = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { search, seasonId } = req.query;
+    const { search } = req.query;
 
     const where: any = {};
 
@@ -13,15 +13,10 @@ export const getAllEvents = async (req: Request, res: Response): Promise<void> =
       where.name = { [Op.like]: `%${search}%` };
     }
 
-    if (seasonId) {
-      where.seasonId = seasonId;
-    }
-
     const events = await Event.findAll({
       where,
       include: [
-        { model: Season, as: 'season' },
-        { model: Game, as: 'games' },
+        { model: Game, as: 'game', attributes: ['id', 'name'] },
         {
           model: Registration,
           as: 'registrations',
@@ -44,15 +39,22 @@ export const getEventById = async (req: Request, res: Response): Promise<void> =
 
     const event = await Event.findByPk(id, {
       include: [
-        { model: Season, as: 'season' },
-        { model: Game, as: 'games' },
+        { model: Game, as: 'game' },
         {
           model: Registration,
           as: 'registrations',
           include: [
-            { model: User, as: 'user', attributes: ['id', 'username', 'avatar'] },
-            { model: Game, as: 'preferredGame' }
+            { model: User, as: 'user', attributes: ['id', 'username', 'avatar'] }
           ]
+        },
+        {
+          model: Match,
+          as: 'matches',
+          include: [
+            { model: User, as: 'winner', attributes: ['id', 'username'] },
+            { model: Game, as: 'game', attributes: ['id', 'name'] }
+          ],
+          order: [['playedAt', 'DESC']]
         }
       ]
     });
@@ -71,16 +73,16 @@ export const getEventById = async (req: Request, res: Response): Promise<void> =
 
 export const createEvent = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { name, date, description, location, seasonId, maxParticipants, gameIds } = req.body;
+    const { name, date, description, location, gameId, maxParticipants } = req.body;
 
-    if (!name || !date || !seasonId) {
-      res.status(400).json({ message: 'Naziv, datum i sezona su obavezni.' });
+    if (!name || !date || !gameId) {
+      res.status(400).json({ message: 'Naziv, datum i igra su obavezni.' });
       return;
     }
 
-    const season = await Season.findByPk(seasonId);
-    if (!season) {
-      res.status(400).json({ message: 'Sezona ne postoji.' });
+    const game = await Game.findByPk(gameId);
+    if (!game) {
+      res.status(400).json({ message: 'Igra ne postoji.' });
       return;
     }
 
@@ -89,22 +91,12 @@ export const createEvent = async (req: AuthRequest, res: Response): Promise<void
       date,
       description,
       location,
-      seasonId,
+      gameId,
       maxParticipants
     });
 
-    // Associate games if provided
-    if (gameIds && Array.isArray(gameIds)) {
-      for (const gameId of gameIds) {
-        await EventGame.create({ eventId: event.id, gameId });
-      }
-    }
-
     const createdEvent = await Event.findByPk(event.id, {
-      include: [
-        { model: Season, as: 'season' },
-        { model: Game, as: 'games' }
-      ]
+      include: [{ model: Game, as: 'game' }]
     });
 
     res.status(201).json(createdEvent);
@@ -117,7 +109,7 @@ export const createEvent = async (req: AuthRequest, res: Response): Promise<void
 export const updateEvent = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const { name, date, description, location, seasonId, maxParticipants, gameIds } = req.body;
+    const { name, date, description, location, gameId, maxParticipants } = req.body;
 
     const event = await Event.findByPk(id);
 
@@ -131,23 +123,12 @@ export const updateEvent = async (req: AuthRequest, res: Response): Promise<void
       date: date || event.date,
       description: description !== undefined ? description : event.description,
       location: location !== undefined ? location : event.location,
-      seasonId: seasonId || event.seasonId,
+      gameId: gameId || event.gameId,
       maxParticipants: maxParticipants !== undefined ? maxParticipants : event.maxParticipants
     });
 
-    // Update game associations if provided
-    if (gameIds && Array.isArray(gameIds)) {
-      await EventGame.destroy({ where: { eventId: event.id } });
-      for (const gameId of gameIds) {
-        await EventGame.create({ eventId: event.id, gameId });
-      }
-    }
-
     const updatedEvent = await Event.findByPk(event.id, {
-      include: [
-        { model: Season, as: 'season' },
-        { model: Game, as: 'games' }
-      ]
+      include: [{ model: Game, as: 'game' }]
     });
 
     res.json(updatedEvent);
@@ -180,12 +161,9 @@ export const deleteEvent = async (req: AuthRequest, res: Response): Promise<void
 export const registerForEvent = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const { selectedGame } = req.body;
     const userId = req.userId!;
 
-    const event = await Event.findByPk(id, {
-      include: [{ model: Registration, as: 'registrations' }]
-    });
+    const event = await Event.findByPk(id);
 
     if (!event) {
       res.status(404).json({ message: 'Dogadjaj nije pronadjen.' });
@@ -205,7 +183,7 @@ export const registerForEvent = async (req: AuthRequest, res: Response): Promise
     // Check max participants
     if (event.maxParticipants) {
       const currentRegistrations = await Registration.count({
-        where: { eventId: id, status: { [Op.ne]: 'cancelled' } }
+        where: { eventId: id }
       });
       if (currentRegistrations >= event.maxParticipants) {
         res.status(400).json({ message: 'Dogadjaj je popunjen.' });
@@ -215,9 +193,7 @@ export const registerForEvent = async (req: AuthRequest, res: Response): Promise
 
     const registration = await Registration.create({
       userId,
-      eventId: parseInt(id),
-      status: 'confirmed',
-      selectedGame
+      eventId: parseInt(id)
     });
 
     res.status(201).json({ message: 'Uspesno ste se prijavili.', registration });
