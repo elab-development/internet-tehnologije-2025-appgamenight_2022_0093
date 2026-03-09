@@ -35,7 +35,7 @@ services:
       JWT_SECRET: your-super-secret-jwt-key-change-in-production
       PORT: 5000
       FRONTEND_URL: http://localhost:3000
-      OPENWEATHER_API_KEY: aa2a62d94c2a39af87c270df549515a9
+      OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY:-your_api_key_here}
     ports:
       - "5000:5000"
     volumes:
