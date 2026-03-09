@@ -30,7 +30,7 @@ app.use(helmet());
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minuta
-  max: 100, // max 100 zahteva po IP-u
+  max: process.env.NODE_ENV === 'development' ? 1000 : 100, // dev: 1000, prod: 100 zahteva po IP-u
   message: { message: 'Previse zahteva. Pokusajte ponovo kasnije.' }
 });
 app.use('/api/', limiter);
