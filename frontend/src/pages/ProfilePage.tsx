@@ -26,7 +26,7 @@ interface Stats {
   winsPerGame: Array<{
     gameId: number;
     game: { id: number; name: string };
-    dataValues: { wins: string };
+    wins: string;
   }>;
   recentMatches: Array<{
     id: number;
@@ -155,7 +155,7 @@ const ProfilePage: React.FC = () => {
     datasets: [
       {
         label: 'Pobede',
-        data: stats?.winsPerGame?.map((item) => parseInt(item.dataValues.wins)) || [],
+        data: stats?.winsPerGame?.map((item) => parseInt(item.wins)) || [],
         backgroundColor: [
           'rgba(54, 162, 235, 0.7)',
           'rgba(255, 99, 132, 0.7)',

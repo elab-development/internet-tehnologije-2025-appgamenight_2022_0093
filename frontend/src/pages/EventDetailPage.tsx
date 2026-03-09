@@ -284,7 +284,12 @@ const EventDetailPage: React.FC = () => {
           {isAdmin && (
             <Card className="mb-4">
               <h5>Unos rezultata</h5>
-              {event.registrations && event.registrations.length > 0 ? (
+              {isUpcoming && (
+                <Alert variant="warning" className="mb-0">
+                  Rezultati se mogu unositi tek nakon sto se dogadjaj zavrsi.
+                </Alert>
+              )}
+              {!isUpcoming && event.registrations && event.registrations.length > 0 ? (
                 <div className="d-flex gap-2 align-items-end">
                   <Form.Group className="flex-grow-1">
                     <Form.Label>Pobednik</Form.Label>
@@ -310,7 +315,7 @@ const EventDetailPage: React.FC = () => {
                   </Button>
                 </div>
               ) : (
-                <p className="text-muted mb-0">Nema prijavljenih igraca.</p>
+                !isUpcoming && <p className="text-muted mb-0">Nema prijavljenih igraca.</p>
               )}
             </Card>
           )}
